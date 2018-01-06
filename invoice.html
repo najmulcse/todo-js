@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    
+</head>
+<body>
+    <table class="">
+        <thead>
+            <td>Item</td>
+            <td>quantity</td>
+            <td>Rate</td>
+            <td>Tax</td>
+            <td>Subtotal</td>
+            <td>Action</td>
+        </thead>
+        <tbody class="invoice_list_wrapper">
+            
+        </tbody>
+    </table>
+    
+    <button class="invoice_item_add_button">Add Invoice Item</button>
+    <table>
+            <tr>
+                <td>Subtotal</td>
+            </tr>
+            <tr >
+              <td class="invoice_subtotal"></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+            </tr>
+            <tr>
+                <td></td>
+            </tr>
+        </table>
+</body>
+<script src="jquery-3.2.1.min.js"></script>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var invoice_item_add_button = $('.invoice_item_add_button');
+        var invoice_list_wrapper    = $('.invoice_list_wrapper');
+        var maxLimit                = 10 ;
+        var invoice_count           = 0;
+        var isValid                 = true ;
+        var invoice_quantity_array = [];
+        var qt ;
+        var id_detect = 1;
+        var tempVal ;
+        var visited;
+        var final_results = [];
+
+
+        $('.invoice_item_add_button').click(function(e){
+            //console.log(invoice_count);
+                e.preventDefault();
+                if(invoice_count<maxLimit){
+                    $('.invoice_input_class').each(function(){
+                            if ($.trim($(this).val()).length == 0){
+                                 isValid = false;
+                                 return false;   
+                              }
+                              isValid = true ;
+                    });
+                    if(invoice_count ===0 && isValid){
+                     
+                        $(invoice_list_wrapper).append('<tr>'+
+                        '<td><input type="text" class="invoice_input_class" name="item"></td>'+
+                        '<td><input type="text" class="invoice_input_class" ></td>'+
+                        '<td><input type="text" class="invoice_input_class"></td>'+
+                        '<td><input type="text" class="invoice_input_class"></td>'+
+                        '<td><label class="invoice_subtotal'+invoice_count+'"></label></td>'+
+                         '</tr>');
+                         
+                         invoice_count++;
+                       //  console.log(invoice_count);
+                    }else if(isValid){
+                        
+                        $(invoice_list_wrapper).append('<tr>'+
+                            '<td><input type="text" class="invoice_input_class" id="invoice_item+" name="item[]"></td>'+
+                            '<td><input type="text" class="invoice_input_class"></td>'+
+                            '<td><input type="text" class="invoice_input_class"></td>'+
+                            '<td><input type="text" class="invoice_input_class"></td>'+
+                            '<td><label class ="invoice_subtotal'+invoice_count+'"></label></td>'+
+                            '<td><a href="#" class="remove_invoice_item">Remove</a></td>'+
+                            '</tr>');
+                            invoice_count++;
+                        
+                    }
+                   
+                     $('.invoice_input_class').keyup(function(e){
+
+                         tempVal = 1;
+                         visited = 0;
+                         final_results = [];     
+
+                        $('.invoice_input_class').each(function(){
+                            if(visited > 0){
+                                if($(this).val() != ''){
+                                    tempVal = tempVal * $(this).val();
+                                }         
+                            }
+                            if(visited == 3){
+
+                                visited = -1;
+                                final_results.push(tempVal);
+                                tempVal = 1;
+                            }
+
+                            visited++;`
+                            
+                        });
+                        $('.invoice_subtotal'+invoice_count-1).text(final_results);
+                        console.log(final_results); 
+                          
+                    });
+                    
+                    
+                }
+                // function getInvoiceQuantity(index){
+                //     return invoice_quantity_array[index];
+
+               // }
+                // function setInvoiceQuantity(invoice_count, qt){
+                //         invoice_quantity_array[invoice_count] = qt ;
+                //         $('#invoice_subtotal'+invoice_count).text(invoice_quantity_array[invoice_count]);
+                //         $('.invoice_subtotal').text(invoice_quantity_array[invoice_count])
+                //        console.log(invoice_quantity_array[invoice_count]);
+                //     } 
+        });
+
+               
+
+        $(invoice_list_wrapper).on("click",".remove_invoice_item",function(e){
+                   e.preventDefault();
+                   $(this).closest('tr').remove();
+                   invoice_count--; 
+                });
+
+    
+});
+
+</script>
